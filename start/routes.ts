@@ -20,6 +20,9 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/', async () => {
-  return { hello: 'world' }
-})
+Route.resource('/user', 'UsersController')
+
+// Route.get('/user', 'UsersController.index')
+// Route.post('/user', 'UsersController.store')
+// Route.put('/user/:id', 'UsersController.update')
+// Route.delete('/user/:id', 'UsersController.delete')
