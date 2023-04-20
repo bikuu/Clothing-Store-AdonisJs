@@ -1,7 +1,6 @@
 import { DateTime } from "luxon";
 import {
   BaseModel,
-  beforeFetch,
   beforeSave,
   column,
 } from "@ioc:Adonis/Lucid/Orm";
@@ -16,8 +15,10 @@ export default class User extends BaseModel {
   public last_name: string;
   @column()
   public email: string;
-  @column()
+  @column({ serializeAs: null })
   public password: string;
+  @column()
+  public rememberMeToken?: string;
   @column()
   public role: string;
   @column()
@@ -41,10 +42,5 @@ export default class User extends BaseModel {
       user.password = await Hash.make(user.password);
     }
   }
-  // @beforeFetch()
-  // public static async comparePassword(user:User){
-  //   if(user.$dirty.password){
-  //     user.password = await Has
-  //   }
-  // }
+ 
 }

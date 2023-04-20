@@ -18,11 +18,13 @@
 |
 */
 
-import Route from '@ioc:Adonis/Core/Route'
+import Route from "@ioc:Adonis/Core/Route";
 
-Route.resource('/user', 'UsersController')
-
-// Route.get('/user', 'UsersController.index')
-// Route.post('/user', 'UsersController.store')
-// Route.put('/user/:id', 'UsersController.update')
-// Route.delete('/user/:id', 'UsersController.delete')
+Route.group(() => {
+  Route.post("/register", "UsersController.register");
+  Route.get("/user", "UsersController.index");
+  Route.put("/user/:id", "UsersController.update");
+  Route.delete("/user/:id", "UsersController.delete");
+  Route.post("/login", "UsersController.login");
+  Route.post("/logout", "UsersController.logout");
+});

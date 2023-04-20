@@ -1,34 +1,64 @@
-// import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 
-import Database from "@ioc:Adonis/Lucid/Database";
 import User from "App/Models/User";
 import UserValidator from "App/Validators/UserValidator";
+import Hash from "@ioc:Adonis/Core/Hash";
 
 export default class UsersController {
-  public async index({ response }) {
+  public async index({ response }: HttpContextContract) {
     const users = await User.all();
     return response.send(users);
   }
-  public async store({ request, response }) {
+
+  public async register({ request, response }: HttpContextContract) {
     // const {id, email, first_name,last_name, password} = request.body();
     const payload = await request.validate(UserValidator);
 
     try {
       const users = await User.create(payload);
-      return response.send(users);
+      return response.status(200).send(users);
     } catch (error) {
       response.send(error);
     }
   }
-  public async update({ request, response, params }) {
+  public async login({ auth, request, response }: HttpContextContract) {
+    const email = request.input("email");
+    const password = request.input("password");
+
+    try {
+      // Lookup user manually
+      const user = await User.findBy("email", email);
+      if (!user) return response.unauthorized("Email not found");
+      // Verify password
+      if (!(await Hash.verify(user.password, password))) {
+        return response.unauthorized("Invalid credentials");
+      }
+      const token = await auth.attempt(email, password);
+      response.status(200).send(token);
+    } catch {
+      return response.unauthorized("Invalid credentials error");
+    }
+  }
+
+  public async logout({ auth, response }) {
+    await auth.use("api").revoke();
+    return {
+      revoked: true,
+    };
+  }
+
+  public async update({ request, response, params }: HttpContextContract) {
     // const {id, email, first_name,last_name, password} = request.body();
     const { id } = params;
     const payload = await request.validate(UserValidator);
 
-    const users = await Database.from("users").where("id", id).update(payload);
-    return response.send(users);
+    const user = await User.findOrFail(id);
+    user.merge(payload);
+    await user.save();
+
+    return response.status(200).send(user);
   }
-  public async delete({ response, params }) {
+  public async delete({ response, params }: HttpContextContract) {
     // const {id, email, first_name,last_name, password} = request.body();
     const { id } = params;
     // const payload = await request.validate(UserValidator)
