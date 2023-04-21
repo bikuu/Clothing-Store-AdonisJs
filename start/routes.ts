@@ -21,10 +21,23 @@
 import Route from "@ioc:Adonis/Core/Route";
 
 Route.group(() => {
-  Route.post("/register", "UsersController.register");
-  Route.get("/user", "UsersController.index");
-  Route.put("/user/:id", "UsersController.update");
-  Route.delete("/user/:id", "UsersController.delete");
-  Route.post("/login", "UsersController.login");
-  Route.post("/logout", "UsersController.logout");
+  Route.group(() => {
+    Route.post("/register", "UsersController.register");
+    Route.get("/user", "UsersController.index");
+    Route.put("/user/:id", "UsersController.update");
+    Route.delete("/user/:id", "UsersController.delete");
+    Route.post("/login", "UsersController.login");
+    Route.post("/logout", "UsersController.logout");
+  });
+  Route.group(() => {
+    Route.get("/job/:id?", "JobsController.index");
+    Route.post("/job/create", "JobsController.create");
+    Route.put("/job/:id", "JobsController.update");
+    Route.delete("/job/:id", "JobsController.destroy");
+
+    Route.get("/workfolio/:id?", "WorkfoliosController.index");
+    Route.post("/workfolio", "WorkfoliosController.create");
+    Route.put("/workfolio/:id", "WorkfoliosController.update");
+    Route.delete("/workfolio/:id", "WorkfoliosController.destroy");
+  });
 });

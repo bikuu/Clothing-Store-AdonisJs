@@ -5,13 +5,13 @@ export default class Workfolio extends BaseModel {
   @column({ isPrimary: true })
   public id: number;
   @column()
-  public userId: number;
+  public user_id: number;
   @column()
   public skill: string;
   @column()
   public images: string;
   @column()
-  public categories: string;
+  public categories: string[];
   @column()
   public description: string;
   @column()

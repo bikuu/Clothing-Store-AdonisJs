@@ -6,13 +6,12 @@ export default class extends BaseSchema {
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
       table.increments("id").unique();
-      table.integer("userId");
+      table.integer("user_id").unsigned().references("id").inTable("users");
       table.string("title", 100).notNullable();
       table.string("images");
-      table.string("categories", 80).notNullable();
+      table.specificType("categories", "text[]").notNullable();
       table.string("description").notNullable();
       table.string("price");
-      table.integer("bid");
       table
         .enu("hiring_status", ["pending", "interviewing", "hired", "declined"])
         .defaultTo("pending");
