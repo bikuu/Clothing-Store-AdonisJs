@@ -39,5 +39,10 @@ Route.group(() => {
     Route.post("/workfolio", "WorkfoliosController.create");
     Route.put("/workfolio/:id", "WorkfoliosController.update");
     Route.delete("/workfolio/:id", "WorkfoliosController.destroy");
+    
+    Route.get("/jobquotes/:id?", "JobQuotationsController.index");
+    Route.post("/jobquotes", "JobQuotationsController.create");
+    Route.put("/jobquotes/:id", "JobQuotationsController.update");
+    Route.delete("/jobquotes/:id", "JobQuotationsController.destroy");
   });
 });
