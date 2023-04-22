@@ -1,7 +1,7 @@
-import { schema, rules, CustomMessages } from '@ioc:Adonis/Core/Validator'
-import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import { schema, rules, CustomMessages } from "@ioc:Adonis/Core/Validator";
+import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 
-export default class UserValidator {
+export default class Job_QuotationValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   /*
@@ -24,19 +24,13 @@ export default class UserValidator {
    *    ```
    */
   public schema = schema.create({
-      first_name: schema.string(),
-      last_name: schema.string(),
-      email: schema.string([
-        rules.email()
-      ]),
-      password: schema.string([
-        rules.minLength(4)
-      ]),
-      image: schema.file.optional({
-        size: '2mb',
-        extnames: ['jpg', 'gif', 'png'],
-      }),
-  })
+    maker_id: schema.number(),
+    job_id: schema.number(),
+    consumer_id: schema.number(),
+    content: schema.string(),
+    hiring_status: schema.string.optional(),
+
+  });
 
   /**
    * Custom messages for validation failures. You can make use of dot notation `(.)`
@@ -49,5 +43,5 @@ export default class UserValidator {
    * }
    *
    */
-  public messages: CustomMessages = {}
+  public messages: CustomMessages = {};
 }

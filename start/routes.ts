@@ -23,7 +23,7 @@ import Route from "@ioc:Adonis/Core/Route";
 Route.group(() => {
   Route.group(() => {
     Route.post("/register", "UsersController.register");
-    Route.get("/user", "UsersController.index");
+    Route.get("/user/:id", "UsersController.index");
     Route.put("/user/:id", "UsersController.update");
     Route.delete("/user/:id", "UsersController.delete");
     Route.post("/login", "UsersController.login");

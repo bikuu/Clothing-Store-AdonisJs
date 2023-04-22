@@ -29,6 +29,12 @@ export default class WorkfolioValidator {
     categories: schema.array().members(schema.string()),
     description: schema.string(),
     price: schema.number(),
+    images: schema.array().members(
+      schema.file.optional({
+        size: "2mb",
+        extnames: ["jpg", "gif", "png"],
+      })
+    ),
   });
 
   /**

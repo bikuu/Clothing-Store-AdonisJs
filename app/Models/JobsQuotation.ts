@@ -1,22 +1,17 @@
 import { DateTime } from "luxon";
 import { BaseModel, column } from "@ioc:Adonis/Lucid/Orm";
 
-export default class Job extends BaseModel {
+export default class JobsQuotation extends BaseModel {
   @column({ isPrimary: true })
   public id: number;
-
   @column()
-  public user_id: number;
+  public maker_id: number;
   @column()
-  public title: string;
+  public job_id: number;
   @column()
-  public images: string[];
+  public consumer_id: number;
   @column()
-  public categories: string[];
-  @column()
-  public description: string;
-  @column()
-  public price: number;
+  public content: string;
   @column()
   public hiring_status: string;
 

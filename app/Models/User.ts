@@ -28,7 +28,7 @@ export default class User extends BaseModel {
   @column()
   public dob: Date;
   @column()
-  public imageProfile: string;
+  public image: string;
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;

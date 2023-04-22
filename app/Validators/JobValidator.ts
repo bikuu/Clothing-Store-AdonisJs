@@ -26,7 +26,12 @@ export default class JobValidator {
   public schema = schema.create({
     user_id: schema.number(),
     title: schema.string(),
-    images: schema.string.optional(),
+    images: schema.array().members(
+      schema.file.optional({
+        size: "2mb",
+        extnames: ["jpg", "gif", "png"],
+      })
+    ),
     categories: schema.array().members(schema.string()),
     description: schema.string(),
     hiring_status: schema.string.optional(),

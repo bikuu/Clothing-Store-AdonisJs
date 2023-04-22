@@ -15,7 +15,7 @@ export default class extends BaseSchema {
       table.string("address");
       table.integer("phone");
       table.date("dob");
-      table.string("imageProfile");
+      table.string("image");
 
       /**
        * Uses timestampz for PostgreSQL and DATETIME2 for MSSQL
