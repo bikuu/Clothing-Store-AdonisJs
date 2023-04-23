@@ -36,13 +36,13 @@ Route.group(() => {
     Route.delete("/job/:id", "JobsController.destroy");
 
     Route.get("/workfolio/:id?", "WorkfoliosController.index");
-    Route.post("/workfolio", "WorkfoliosController.create");
+    Route.post("/workfolio/create", "WorkfoliosController.create");
     Route.put("/workfolio/:id", "WorkfoliosController.update");
     Route.delete("/workfolio/:id", "WorkfoliosController.destroy");
     
-    Route.get("/jobquotes/:id?", "JobQuotationsController.index");
-    Route.post("/jobquotes", "JobQuotationsController.create");
-    Route.put("/jobquotes/:id", "JobQuotationsController.update");
-    Route.delete("/jobquotes/:id", "JobQuotationsController.destroy");
+    Route.get("/jobquotas/:id?", "JobQuotationsController.index");
+    Route.post("/jobquotas/create", "JobQuotationsController.create");
+    Route.put("/jobquotas/:id", "JobQuotationsController.update");
+    Route.delete("/jobquotas/:id", "JobQuotationsController.destroy");
   });
 });

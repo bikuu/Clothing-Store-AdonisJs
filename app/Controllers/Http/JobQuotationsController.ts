@@ -19,16 +19,14 @@ export default class JobQuotationsController {
   public async create({ request, response }: HttpContextContract) {
     const payload = await request.validate(Job_QuotationValidator);
 
-    try {
+
       const jobsQuotation = new JobsQuotation();
       //   if(payload.maker_id)
       jobsQuotation.fill(payload);
       await jobsQuotation.save();
 
       return response.status(200).send(jobsQuotation);
-    } catch (error) {
-      response.send(error);
-    }
+    
   }
 
   public async update({ request, response, params }: HttpContextContract) {

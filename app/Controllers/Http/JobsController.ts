@@ -1,5 +1,6 @@
 import type { HttpContextContract } from "@ioc:Adonis/Core/HttpContext";
 import Job from "App/Models/Job";
+import JobsQuotation from "App/Models/JobsQuotation";
 import JobValidator from "App/Validators/JobValidator";
 const cloudinary = require("cloudinary").v2;
 // cloudinary.config({
@@ -14,21 +15,34 @@ export default class JobsController {
     if (id) {
       const data = await Job.findBy("id", id);
       if (data) {
+        const quotation = await JobsQuotation.all();
+        const uniqueQuotation = quotation.map((result) => {
+          if (result.job_id === id) {
+            return true;
+          }
+        });
+
         const categories = JSON.parse(JSON.stringify(data.categories));
         const categoriesArray = categories
-        .split(",")
-        .map((category) => category.replace(/[{}"']/g, ""));
-        
-        data.categories = categoriesArray;
-       
-       if(data.images){
-        const images = JSON.parse(JSON.stringify(data.images));
-        const imagesArray = images
           .split(",")
-          .map((image) => image.replace(/[{}"']/g, ""));
-        data.images = imagesArray;
-       }
-        return response.status(200).send(data);
+          .map((category) => category.replace(/[{}"']/g, ""));
+
+        data.categories = categoriesArray;
+
+        if (data.images) {
+          const images = JSON.parse(JSON.stringify(data.images));
+          const imagesArray = images
+            .split(",")
+            .map((image) => image.replace(/[{}"']/g, ""));
+          data.images = imagesArray;
+        }
+        const newData = {
+          ...data.$attributes,
+          categories: data.categories,
+          images: data.images,
+          totalQuotation: uniqueQuotation.length || null,
+        };
+        return response.status(200).send(newData);
       }
     }
     const datas = await Job.all();
@@ -36,22 +50,21 @@ export default class JobsController {
 
     for (let i = 0; i < datas?.length; i++) {
       let categories = JSON.parse(JSON.stringify(datas[i].categories));
-      
-      let categoriesArray = categories
-      .split(",")
-      .map((category) => category.replace(/[{}"']/g, ""));
-      datas[i].categories = categoriesArray;
-      
-     if(datas[i].images){
-      let images = JSON.parse(JSON.stringify(datas[i].images));
-      const imagesArray = images
-        .split(",")
-        .map((image) => image.replace(/[{}"']/g, ""));
-        datas[i].images = imagesArray;
-     }
 
+      let categoriesArray = categories
+        .split(",")
+        .map((category) => category.replace(/[{}"']/g, ""));
+      datas[i].categories = categoriesArray;
+
+      if (datas[i].images) {
+        let images = JSON.parse(JSON.stringify(datas[i].images));
+        const imagesArray = images
+          .split(",")
+          .map((image) => image.replace(/[{}"']/g, ""));
+        datas[i].images = imagesArray;
       }
-      return response.status(200).send(datas);
+    }
+    return response.status(200).send(datas);
   }
 
   public async create({ request, response }: HttpContextContract) {

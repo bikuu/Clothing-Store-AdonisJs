@@ -72,7 +72,7 @@ export default class WorkfoliosController {
       }
       await workfolio.save();
 
-      return response.status(200).send(Workfolio);
+      return response.status(200).send(workfolio);
     }
   }
 
@@ -96,7 +96,7 @@ export default class WorkfoliosController {
       }
       await workfolio.save();
 
-      return response.status(200).send(Workfolio);
+      return response.status(200).send(workfolio);
     }
   }
 
