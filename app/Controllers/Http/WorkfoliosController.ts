@@ -48,42 +48,50 @@ export default class WorkfoliosController {
     return response.status(200).send(datas);
   }
 
-  public async create({ request, response }: HttpContextContract) {
+  public async create({ auth, request, response }: HttpContextContract) {
     // const file = request.file("images");
 
     const payload = await request.validate(WorkfolioValidator);
     // return payload;
     const { images, ...others } = payload;
 
-    const workfolio = new Workfolio();
-    workfolio.fill(others);
-    // Upload
-    if (images) {
+    if (auth.user?.role === "maker") {
+      const workfolio = new Workfolio();
+      workfolio.fill(others);
+      // Upload
       if (images) {
-        const uploadedImages = await Promise.all(
-          images.map(async (file) => {
-            const result = await cloudinary.uploader.upload(file?.tmpPath);
-            return result.secure_url;
-          })
-        );
-        // const result = await cloudinary.uploader.upload(images?.tmpPath);
+        if (images) {
+          const uploadedImages = await Promise.all(
+            images.map(async (file) => {
+              const result = await cloudinary.uploader.upload(file?.tmpPath);
+              return result.secure_url;
+            })
+          );
+          // const result = await cloudinary.uploader.upload(images?.tmpPath);
 
-        workfolio.images = uploadedImages;
+          workfolio.images = uploadedImages;
+        }
+        await workfolio.save();
+
+        return response.status(200).send(workfolio);
       }
-      await workfolio.save();
-
-      return response.status(200).send(workfolio);
+    } else {
+      response.status(403).send({ msg: "Only maker can post their gigs" });
     }
   }
 
-  public async update({ request, response, params }: HttpContextContract) {
+  public async update({
+    auth,
+    request,
+    response,
+    params,
+  }: HttpContextContract) {
     const { id } = params;
     const payload = await request.validate(WorkfolioValidator);
     const { images, ...others } = payload;
-
-    const workfolio = await Workfolio.findOrFail(id);
-    workfolio.merge(others);
-    if (images) {
+    if (auth.user?.role === "maker") {
+      const workfolio = await Workfolio.findOrFail(id);
+      workfolio.merge(others);
       if (images) {
         const uploadedImages = await Promise.all(
           images.map(async (file) => {
@@ -97,15 +105,17 @@ export default class WorkfoliosController {
       await workfolio.save();
 
       return response.status(200).send(workfolio);
+    } else {
+      response.status(403).send({ msg: "Only maker can post their gigs" });
     }
   }
 
-  public async destroy({ request, response, params }: HttpContextContract) {
+  public async destroy({ auth, response, params }: HttpContextContract) {
     const { id } = params;
 
     const data = await Workfolio.findBy("id", id);
-    if (data?.user_id === request.input("user_id")) {
-      //  data?.delete();
+    if (data?.user_id === auth.user?.id) {
+      data?.delete();
 
       return response.send({ msg: "Workfolio Deleted" });
     } else {

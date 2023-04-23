@@ -6,12 +6,16 @@ import UserValidator from "App/Validators/UserValidator";
 import Hash from "@ioc:Adonis/Core/Hash";
 
 export default class UsersController {
-  public async index({ response, params }: HttpContextContract) {
+  public async index({ auth, response, params }: HttpContextContract) {
     const { id } = params;
+    await auth.use("api").authenticate();
+    const user = auth.user;
     if (id) {
       const data = await User.findBy("id", id);
+
       return response.status(200).send(data);
     }
+    return response.status(200).send(user);
   }
 
   public async register({ request, response }: HttpContextContract) {
