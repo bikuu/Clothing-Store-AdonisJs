@@ -9,12 +9,12 @@ export default class WorkfoliosController {
     if (id) {
       const data = await Workfolio.findBy("id", id);
       if (data) {
-        const categories = JSON.parse(JSON.stringify(data.categories));
-        const categoriesArray = categories
-          .split(",")
-          .map((category) => category.replace(/[{}"']/g, ""));
+        // const categories = JSON.parse(JSON.stringify(data.categories));
+        // const categoriesArray = categories
+        //   .split(",")
+        //   .map((category) => category.replace(/[{}"']/g, ""));
 
-        data.categories = categoriesArray;
+        // data.categories = categoriesArray;
 
         if (data.images) {
           const images = JSON.parse(JSON.stringify(data.images));
@@ -30,12 +30,12 @@ export default class WorkfoliosController {
     console.log(datas.length);
 
     for (let i = 0; i < datas?.length; i++) {
-      let categories = JSON.parse(JSON.stringify(datas[i].categories));
+      // let categories = JSON.parse(JSON.stringify(datas[i].categories));
 
-      let categoriesArray = categories
-        .split(",")
-        .map((category) => category.replace(/[{}"']/g, ""));
-      datas[i].categories = categoriesArray;
+      // let categoriesArray = categories
+      //   .split(",")
+      //   .map((category) => category.replace(/[{}"']/g, ""));
+      // datas[i].categories = categoriesArray;
 
       if (datas[i].images) {
         let images = JSON.parse(JSON.stringify(datas[i].images));

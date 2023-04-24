@@ -36,6 +36,13 @@ export default class JobValidator {
     description: schema.string(),
     hiring_status: schema.string.optional(),
     price: schema.number(),
+    location: schema
+      .object()
+      .members({
+        city: schema.string(),
+        state: schema.string(),
+        postalcode: schema.number(),
+      }),
   });
 
   /**

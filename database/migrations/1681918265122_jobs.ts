@@ -8,10 +8,12 @@ export default class extends BaseSchema {
       table.increments("id").unique();
       table.integer("user_id").unsigned().references("id").inTable("users");
       table.string("title", 100).notNullable();
-      table.string("images");
-      table.specificType("categories", "text[]").notNullable();
+      table.json("images");
+      table.json("categories").notNullable();
       table.string("description").notNullable();
       table.string("price");
+      table.json("location").notNullable();
+
       table
         .enu("hiring_status", ["pending", "interviewing", "hired", "declined"])
         .defaultTo("pending");

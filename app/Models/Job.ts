@@ -19,6 +19,13 @@ export default class Job extends BaseModel {
   public price: number;
   @column()
   public hiring_status: string;
+  @column()
+  public location: object;
+  static searchByLocation(location) {
+    return this.query().whereRaw(
+      `location->>'city' like '%${location}%' or location->>'state' like '%${location}%'`
+    );
+  }
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;

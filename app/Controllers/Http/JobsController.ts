@@ -22,12 +22,12 @@ export default class JobsController {
           }
         });
 
-        const categories = JSON.parse(JSON.stringify(data.categories));
-        const categoriesArray = categories
-          .split(",")
-          .map((category) => category.replace(/[{}"']/g, ""));
+        // const categories = JSON.parse(JSON.stringify(data.categories));
+        // const categoriesArray = categories
+        //   .split(",")
+        //   .map((category) => category.replace(/[{}"']/g, ""));
 
-        data.categories = categoriesArray;
+        // data.categories = categoriesArray;
 
         if (data.images) {
           const images = JSON.parse(JSON.stringify(data.images));
@@ -38,8 +38,8 @@ export default class JobsController {
         }
         const newData = {
           ...data.$attributes,
-          categories: data.categories,
-          images: data.images,
+          // categories: data.categories,
+          // images: data.images,
           totalQuotation: uniqueQuotation.length || null,
         };
         return response.status(200).send(newData);
@@ -49,12 +49,12 @@ export default class JobsController {
 
     if (datas) {
       for (let i = 0; i < datas?.length; i++) {
-        let categories = JSON.parse(JSON.stringify(datas[i].categories));
+        // let categories = JSON.parse(JSON.stringify(datas[i].categories));
 
-        let categoriesArray = categories
-          .split(",")
-          .map((category) => category.replace(/[{}"']/g, ""));
-        datas[i].categories = categoriesArray;
+        // let categoriesArray = categories[i]
+        //   .split(",")
+        //   .map((category) => category.replace(/[{}"']/g, ""));
+        // datas[i].categories = categoriesArray;
 
         if (datas[i].images) {
           let images = JSON.parse(JSON.stringify(datas[i].images));
@@ -68,6 +68,11 @@ export default class JobsController {
     return response.status(200).send(datas);
   }
 
+  public async search({ request }: HttpContextContract) {
+    const location = request.input("location");
+    const jobs = await Job.searchByLocation(location);
+    return jobs;
+  }
   public async create({ auth, request, response }: HttpContextContract) {
     // const file = request.file("images");
 
