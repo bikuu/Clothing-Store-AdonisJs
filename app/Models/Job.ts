@@ -23,7 +23,7 @@ export default class Job extends BaseModel {
   public location: object;
   static searchByLocation(location) {
     return this.query().whereRaw(
-      `location->>'city' like '%${location}%' or location->>'state' like '%${location}%'`
+      `location->>'city' like '%${location}%' or location->>'state' like '%${location}%' or location->>'postalcode' like '%${location}%'`
     );
   }
 
