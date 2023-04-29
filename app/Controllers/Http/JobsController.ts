@@ -12,66 +12,78 @@ const cloudinary = require("cloudinary").v2;
 export default class JobsController {
   public async index({ response, params }: HttpContextContract) {
     const { id } = params;
-    if (id) {
-      const data = await Job.findBy("id", id);
-      if (data) {
-        const quotation = await JobsQuotation.all();
-        const uniqueQuotation = quotation.map((result) => {
-          if (result.job_id === id) {
-            return true;
+    try {
+      if (id) {
+        const data = await Job.findBy("id", id);
+        if (data) {
+          const quotation = await JobsQuotation.all();
+          const uniqueQuotation = quotation.map((result) => {
+            if (result.job_id === id) {
+              return true;
+            }
+          });
+
+          // const categories = JSON.parse(JSON.stringify(data.categories));
+          // const categoriesArray = categories
+          //   .split(",")
+          //   .map((category) => category.replace(/[{}"']/g, ""));
+
+          // data.categories = categoriesArray;
+
+          if (data.images) {
+            const images = JSON.parse(JSON.stringify(data.images));
+            const imagesArray = images
+              .split(",")
+              .map((image) => image.replace(/[{}"']/g, ""));
+            data.images = imagesArray;
           }
-        });
-
-        // const categories = JSON.parse(JSON.stringify(data.categories));
-        // const categoriesArray = categories
-        //   .split(",")
-        //   .map((category) => category.replace(/[{}"']/g, ""));
-
-        // data.categories = categoriesArray;
-
-        if (data.images) {
-          const images = JSON.parse(JSON.stringify(data.images));
-          const imagesArray = images
-            .split(",")
-            .map((image) => image.replace(/[{}"']/g, ""));
-          data.images = imagesArray;
+          const newData = {
+            ...data.$attributes,
+            // categories: data.categories,
+            // images: data.images,
+            totalQuotation: uniqueQuotation.length || null,
+          };
+          return response.status(200).send(newData);
         }
-        const newData = {
-          ...data.$attributes,
-          // categories: data.categories,
-          // images: data.images,
-          totalQuotation: uniqueQuotation.length || null,
-        };
-        return response.status(200).send(newData);
       }
+    } catch (error) {
+      response.send({ msg: error });
     }
     const datas = await Job.all();
 
-    if (datas) {
-      for (let i = 0; i < datas?.length; i++) {
-        // let categories = JSON.parse(JSON.stringify(datas[i].categories));
+    try {
+      if (datas) {
+        for (let i = 0; i < datas?.length; i++) {
+          // let categories = JSON.parse(JSON.stringify(datas[i].categories));
 
-        // let categoriesArray = categories[i]
-        //   .split(",")
-        //   .map((category) => category.replace(/[{}"']/g, ""));
-        // datas[i].categories = categoriesArray;
+          // let categoriesArray = categories[i]
+          //   .split(",")
+          //   .map((category) => category.replace(/[{}"']/g, ""));
+          // datas[i].categories = categoriesArray;
 
-        if (datas[i].images) {
-          let images = JSON.parse(JSON.stringify(datas[i].images));
-          const imagesArray = images
-            .split(",")
-            .map((image) => image.replace(/[{}"']/g, ""));
-          datas[i].images = imagesArray;
+          if (datas[i].images) {
+            let images = JSON.parse(JSON.stringify(datas[i].images));
+            const imagesArray = images
+              .split(",")
+              .map((image) => image.replace(/[{}"']/g, ""));
+            datas[i].images = imagesArray;
+          }
         }
       }
+      return response.status(200).send(datas);
+    } catch (error) {
+      response.send({ msg: error });
     }
-    return response.status(200).send(datas);
   }
 
-  public async search({ request }: HttpContextContract) {
-    const location = request.input("location");
-    const jobs = await Job.searchByLocation(location);
-    return jobs;
+  public async search({ request, response }: HttpContextContract) {
+    try {
+      const location = request.input("location");
+      const jobs = await Job.searchByLocation(location);
+      return response.status(201).send({ data: jobs });
+    } catch (error) {
+      response.send({ msg: error });
+    }
   }
   public async create({ auth, request, response }: HttpContextContract) {
     // const file = request.file("images");
@@ -79,29 +91,32 @@ export default class JobsController {
     const payload = await request.validate(JobValidator);
     // return payload;
     const { images, ...others } = payload;
-
-    if (auth.user?.role === "consumer") {
-      const job = new Job();
-      job.fill(others);
-      // Upload
-      if (images) {
+    try {
+      if (auth.user?.role === "consumer") {
+        const job = new Job();
+        job.fill(others);
+        // Upload
         if (images) {
-          const uploadedImages = await Promise.all(
-            images.map(async (file) => {
-              const result = await cloudinary.uploader.upload(file?.tmpPath);
-              return result.secure_url;
-            })
-          );
-          // const result = await cloudinary.uploader.upload(images?.tmpPath);
+          if (images) {
+            const uploadedImages = await Promise.all(
+              images.map(async (file) => {
+                const result = await cloudinary.uploader.upload(file?.tmpPath);
+                return result.secure_url;
+              })
+            );
+            // const result = await cloudinary.uploader.upload(images?.tmpPath);
 
-          job.images = uploadedImages;
+            job.images = uploadedImages;
+          }
+          await job.save();
+
+          return response.status(200).send(job);
         }
-        await job.save();
-
-        return response.status(200).send(job);
+      } else {
+        response.status(403).send({ msg: "Only consumer user can post jobs" });
       }
-    } else {
-      response.status(403).send({ msg: "Only consumer user can post jobs" });
+    } catch (error) {
+      response.send({ msg: error });
     }
   }
 
@@ -115,46 +130,54 @@ export default class JobsController {
     const payload = await request.validate(JobValidator);
     const { images, ...others } = payload;
 
-    if (auth.user?.role === "consumer") {
-      const job = await Job.findOrFail(id);
-      job.merge(others);
-      if (images) {
+    try {
+      if (auth.user?.role === "consumer") {
+        const job = await Job.findOrFail(id);
+        job.merge(others);
         if (images) {
-          const uploadedImages = await Promise.all(
-            images.map(async (file) => {
-              const result = await cloudinary.uploader.upload(file?.tmpPath);
-              return result.secure_url;
-            })
-          );
+          if (images) {
+            const uploadedImages = await Promise.all(
+              images.map(async (file) => {
+                const result = await cloudinary.uploader.upload(file?.tmpPath);
+                return result.secure_url;
+              })
+            );
 
-          job.images = uploadedImages;
+            job.images = uploadedImages;
+          }
+          await job.save();
+
+          return response.status(200).send(job);
         }
-        await job.save();
-
-        return response.status(200).send(job);
+      } else {
+        response
+          .status(403)
+          .send({ msg: "Only consumer user can update post jobs" });
       }
-    } else {
-      response
-        .status(403)
-        .send({ msg: "Only consumer user can update post jobs" });
+    } catch (error) {
+      response.send({ msg: error });
     }
   }
 
   public async destroy({ auth, response, params }: HttpContextContract) {
     const { id } = params;
-    if (auth.user?.role === "consumer") {
-      const data = await Job.findBy("id", id);
-      if (data?.user_id === auth.user.id) {
-        //  data?.delete();
+    try {
+      if (auth.user?.role === "consumer") {
+        const data = await Job.findBy("id", id);
+        if (data?.user_id === auth.user.id) {
+          //  data?.delete();
 
-        return response.send({ msg: "Job Deleted" });
+          return response.send({ msg: "Job Deleted" });
+        } else {
+          return response.status(401).send({ msg: "Unauthorized User" });
+        }
       } else {
-        return response.status(401).send({ msg: "Unauthorized User" });
+        response
+          .status(403)
+          .send({ msg: "Only consumer user can delete post jobs" });
       }
-    } else {
-      response
-        .status(403)
-        .send({ msg: "Only consumer user can delete post jobs" });
+    } catch (error) {
+      response.send({ msg: error });
     }
   }
 }

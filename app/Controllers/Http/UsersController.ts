@@ -10,12 +10,16 @@ export default class UsersController {
     const { id } = params;
     await auth.use("api").authenticate();
     const user = auth.user;
-    if (id) {
-      const data = await User.findBy("id", id);
+    try {
+      if (id) {
+        const data = await User.findBy("id", id);
 
-      return response.status(200).send(data);
+        return response.status(200).send(data);
+      }
+      return response.status(200).send(user);
+    } catch (error) {
+      response.send({ msg: error });
     }
-    return response.status(200).send(user);
   }
 
   public async register({ request, response }: HttpContextContract) {
@@ -58,10 +62,15 @@ export default class UsersController {
   }
 
   public async logout({ auth, response }) {
-    await auth.use("api").revoke();
-    return {
-      revoked: true,
-    };
+    try {
+      await auth.use("api").revoke();
+      return response.status(201).send({
+        revoked: true,
+        msg: "User is logged out",
+      });
+    } catch (error) {
+      return response.unauthorized({ msg: error });
+    }
   }
 
   public async update({ request, response, params }: HttpContextContract) {
@@ -90,10 +99,14 @@ export default class UsersController {
     // const payload = await request.validate(UserValidator)
 
     const user = await User.findBy("id", id);
-    if (user) {
-      user.delete();
+    try {
+      if (user) {
+        user.delete();
 
-      return response.send({ msg: "User Deleted Succesfully" });
+        return response.send({ msg: "User Deleted Succesfully" });
+      }
+    } catch (error) {
+      return response.unauthorized({ msg: error });
     }
   }
 }
