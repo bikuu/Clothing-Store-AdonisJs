@@ -24,7 +24,7 @@ export default class WorkfoliosController {
               .map((image) => image.replace(/[{}"']/g, ""));
             data.images = imagesArray;
           }
-          return response.status(200).send(data);
+          return response.status(200).send({ data: data });
         }
       }
     } catch (error) {
@@ -51,7 +51,7 @@ export default class WorkfoliosController {
             datas[i].images = imagesArray;
           }
         }
-        return response.status(200).send(datas);
+        return response.status(200).send({ datas: datas });
       }
       return response.status(203).send({ msg: "No data" });
     } catch (error) {
@@ -84,7 +84,9 @@ export default class WorkfoliosController {
           }
           await workfolio.save();
 
-          return response.status(200).send(workfolio);
+          return response
+            .status(200)
+            .send({ msg: "Your gigs is created", data: workfolio });
         }
       } else {
         response.status(403).send({ msg: "Only maker can post their gigs" });
@@ -119,7 +121,9 @@ export default class WorkfoliosController {
         }
         await workfolio.save();
 
-        return response.status(200).send(workfolio);
+        return response
+          .status(200)
+          .send({ msg: "Your gigs is updated", updatedGigs: workfolio });
       } else {
         response.status(403).send({ msg: "Only maker can post their gigs" });
       }

@@ -16,7 +16,7 @@ export default class UsersController {
 
         return response.status(200).send(data);
       }
-      return response.status(200).send(user);
+      return response.status(200).send({ data: user });
     } catch (error) {
       response.send({ msg: error });
     }
@@ -37,7 +37,9 @@ export default class UsersController {
       }
       await user.save();
 
-      return response.status(200).send(user);
+      return response
+        .status(200)
+        .send({ msg: "User created sucessfully", data: user });
     } catch (error) {
       response.send(error);
     }
@@ -55,7 +57,9 @@ export default class UsersController {
         return response.unauthorized("Invalid credentials");
       }
       const token = await auth.attempt(email, password);
-      response.status(200).send({ token: token, data: user });
+      response
+        .status(200)
+        .send({ msg: "logged in sucessfully", token: token, data: user });
     } catch {
       return response.unauthorized("Invalid credentials error");
     }
@@ -88,7 +92,9 @@ export default class UsersController {
         user.image = result.secure_url;
       }
       await user.save();
-      return response.status(200).send(user);
+      return response
+        .status(200)
+        .send({ msg: "User updated sucessfully", updatedUser: user });
     } catch (error) {
       return response.unauthorized("Invalid credentials error");
     }

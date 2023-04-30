@@ -43,7 +43,7 @@ export default class JobsController {
             // images: data.images,
             totalQuotation: uniqueQuotation.length || null,
           };
-          return response.status(200).send(newData);
+          return response.status(200).send({ data: newData });
         }
       }
     } catch (error) {
@@ -70,7 +70,7 @@ export default class JobsController {
           }
         }
       }
-      return response.status(200).send(datas);
+      return response.status(200).send({ datas: datas });
     } catch (error) {
       response.send({ msg: error });
     }
@@ -110,7 +110,9 @@ export default class JobsController {
           }
           await job.save();
 
-          return response.status(200).send(job);
+          return response
+            .status(200)
+            .send({ msg: "Jobs created successfully", data: job });
         }
       } else {
         response.status(403).send({ msg: "Only consumer user can post jobs" });
@@ -147,7 +149,9 @@ export default class JobsController {
           }
           await job.save();
 
-          return response.status(200).send(job);
+          return response
+            .status(200)
+            .send({ msg: "Updated Sucessfully", updatedDate: job });
         }
       } else {
         response

@@ -5,6 +5,8 @@ const staticConfig: AssetsConfig = {
   dotFiles: "ignore",
   etag: true,
   lastModified: true,
+  maxAge: "365d",
+  immutable: true,
 };
 
 export default staticConfig;

@@ -14,7 +14,7 @@ export default class JobQuotationsController {
           (auth.user?.id === data.consumer_id ||
             auth.user?.id === data.maker_id)
         ) {
-          return response.status(200).send(data);
+          return response.status(200).send({ data: data });
         }
       }
 
@@ -25,7 +25,7 @@ export default class JobQuotationsController {
         }
       });
       console.log(datas.length);
-      return response.status(200).send(newDatas);
+      return response.status(200).send({ datas: newDatas });
     } catch (error) {
       response.status(500).send({ msg: error });
     }
@@ -41,7 +41,10 @@ export default class JobQuotationsController {
         jobsQuotation.fill(payload);
         await jobsQuotation.save();
 
-        return response.status(200).send(jobsQuotation);
+        return response.status(200).send({
+          msg: "Successfully applied",
+          data: jobsQuotation,
+        });
       }
       return response
         .status(403)
@@ -68,7 +71,9 @@ export default class JobQuotationsController {
       ) {
         jobsQuotation.merge(payload);
         await jobsQuotation.save();
-        return response.status(200).send(JobsQuotation);
+        return response
+          .status(200)
+          .send({ msg: "Updated Successfully", data: JobsQuotation });
       }
     } catch (error) {
       return response.unauthorized("Invalid credentials error");
