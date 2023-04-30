@@ -76,7 +76,10 @@ export default class JobQuotationsController {
           .send({ msg: "Updated Successfully", data: JobsQuotation });
       }
     } catch (error) {
-      return response.unauthorized("Invalid credentials error");
+      return response.unauthorized({
+        msg: "Invalid credentials error",
+        error: error,
+      });
     }
   }
   public async destroy({ auth, response, params }: HttpContextContract) {
