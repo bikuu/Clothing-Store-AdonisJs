@@ -10,14 +10,14 @@ const cloudinary = require("cloudinary").v2;
 // });
 
 export default class JobsController {
-  public async index({ response, params }: HttpContextContract) {
+  public async index({ response, params, auth }: HttpContextContract) {
     const { id } = params;
     try {
       if (id) {
         const data = await Job.findBy("id", id);
         if (data) {
-          const quotation = await JobsQuotation.all();
-          const uniqueQuotation = quotation.filter(
+          const quotations = await JobsQuotation.all();
+          const uniqueQuotation = quotations.filter(
             (result) => result.job_id === data.id
           );
 
@@ -40,7 +40,10 @@ export default class JobsController {
             // categories: data.categories,
             // images: data.images,
             totalQuotation: uniqueQuotation.length || null,
-            appliedUsers: uniqueQuotation,
+            appliedUsers:
+              auth.user?.id === data.user_id
+                ? uniqueQuotation
+                : "Only the original consumer can view it",
           };
           return response.status(200).send({ data: newData });
         }

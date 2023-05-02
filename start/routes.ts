@@ -23,7 +23,6 @@ import Route from "@ioc:Adonis/Core/Route";
 Route.group(() => {
   Route.group(() => {
     Route.get("/job/search", "JobsController.search");
-    Route.get("/job/:id?", "JobsController.index");
     Route.get("/workfolio/:id?", "WorkfoliosController.index");
     Route.post("/register", "UsersController.register");
     Route.post("/login", "UsersController.login");
@@ -35,6 +34,7 @@ Route.group(() => {
     Route.delete("/user/:id", "UsersController.delete");
     Route.post("/logout", "UsersController.logout");
 
+    Route.get("/job/:id?", "JobsController.index");
     Route.post("/job/create", "JobsController.create");
     Route.put("/job/:id", "JobsController.update");
     Route.delete("/job/:id", "JobsController.destroy");
