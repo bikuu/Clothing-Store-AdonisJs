@@ -8,8 +8,9 @@ export default class extends BaseSchema {
       table.increments("id").unique();
       table.integer("user_id").unsigned().references("id").inTable("users");
       table.string("skill", 100).notNullable();
-      table.json("images");
-      table.json("categories").notNullable();
+      table.string("posted_by", 100).notNullable();
+      table.specificType("images", "text[]");
+      table.specificType("categories", "text[]").notNullable();
       table.string("description").notNullable();
       table.string("experience");
       table.integer("price");

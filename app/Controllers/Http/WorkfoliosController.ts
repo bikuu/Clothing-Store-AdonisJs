@@ -82,6 +82,8 @@ export default class WorkfoliosController {
 
             workfolio.images = uploadedImages;
           }
+          workfolio.posted_by = `${auth.user?.first_name} ${auth.user?.last_name}`;
+
           await workfolio.save();
 
           return response

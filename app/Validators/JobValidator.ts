@@ -26,8 +26,8 @@ export default class JobValidator {
   public schema = schema.create({
     user_id: schema.number(),
     title: schema.string(),
-    images: schema.array().members(
-      schema.file.optional({
+    images: schema.array.optional().members(
+      schema.file({
         size: "2mb",
         extnames: ["jpg", "gif", "png"],
       })
@@ -36,13 +36,11 @@ export default class JobValidator {
     description: schema.string(),
     hiring_status: schema.string.optional(),
     price: schema.number(),
-    location: schema
-      .object()
-      .members({
-        city: schema.string(),
-        state: schema.string(),
-        postalcode: schema.number(),
-      }),
+    location: schema.object().members({
+      city: schema.string(),
+      state: schema.string(),
+      postalcode: schema.number(),
+    }),
   });
 
   /**

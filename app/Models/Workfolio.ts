@@ -9,6 +9,8 @@ export default class Workfolio extends BaseModel {
   @column()
   public skill: string;
   @column()
+  public posted_by: string;
+  @column()
   public images: string[];
   @column()
   public categories: string[];

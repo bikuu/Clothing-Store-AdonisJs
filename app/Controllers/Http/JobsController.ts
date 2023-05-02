@@ -17,11 +17,9 @@ export default class JobsController {
         const data = await Job.findBy("id", id);
         if (data) {
           const quotation = await JobsQuotation.all();
-          const uniqueQuotation = quotation.map((result) => {
-            if (result.job_id === id) {
-              return true;
-            }
-          });
+          const uniqueQuotation = quotation.filter(
+            (result) => result.job_id === data.id
+          );
 
           // const categories = JSON.parse(JSON.stringify(data.categories));
           // const categoriesArray = categories
@@ -30,18 +28,19 @@ export default class JobsController {
 
           // data.categories = categoriesArray;
 
-          if (data.images) {
-            const images = JSON.parse(JSON.stringify(data.images));
-            const imagesArray = images
-              .split(",")
-              .map((image) => image.replace(/[{}"']/g, ""));
-            data.images = imagesArray;
-          }
+          // if (data.images) {
+          //   const images = JSON.parse(JSON.stringify(data.images));
+          //   const imagesArray = images
+          //     .split(",")
+          //     .map((image) => image.replace(/[{}"']/g, ""));
+          //   data.images = imagesArray;
+          // }
           const newData = {
             ...data.$attributes,
             // categories: data.categories,
             // images: data.images,
             totalQuotation: uniqueQuotation.length || null,
+            appliedUsers: uniqueQuotation,
           };
           return response.status(200).send({ data: newData });
         }
@@ -50,27 +49,26 @@ export default class JobsController {
       response.send({ msg: error });
     }
     const datas = await Job.all();
-
     try {
       if (datas) {
-        for (let i = 0; i < datas?.length; i++) {
-          // let categories = JSON.parse(JSON.stringify(datas[i].categories));
+        // for (let i = 0; i < datas?.length; i++) {
+        //   // let categories = JSON.parse(JSON.stringify(datas[i].categories));
 
-          // let categoriesArray = categories[i]
-          //   .split(",")
-          //   .map((category) => category.replace(/[{}"']/g, ""));
-          // datas[i].categories = categoriesArray;
+        //   // let categoriesArray = categories[i]
+        //   //   .split(",")
+        //   //   .map((category) => category.replace(/[{}"']/g, ""));
+        //   // datas[i].categories = categoriesArray;
 
-          if (datas[i].images) {
-            let images = JSON.parse(JSON.stringify(datas[i].images));
-            const imagesArray = images
-              .split(",")
-              .map((image) => image.replace(/[{}"']/g, ""));
-            datas[i].images = imagesArray;
-          }
-        }
+        //   if (datas[i].images) {
+        //     let images = JSON.parse(JSON.stringify(datas[i].images));
+        //     const imagesArray = images
+        //       .split(",")
+        //       .map((image) => image.replace(/[{}"']/g, ""));
+        //     datas[i].images = imagesArray;
+        //   }
+        // }
+        return response.status(200).send({ datas: datas });
       }
-      return response.status(200).send({ datas: datas });
     } catch (error) {
       response.send({ msg: error });
     }
@@ -97,23 +95,22 @@ export default class JobsController {
         job.fill(others);
         // Upload
         if (images) {
-          if (images) {
-            const uploadedImages = await Promise.all(
-              images.map(async (file) => {
-                const result = await cloudinary.uploader.upload(file?.tmpPath);
-                return result.secure_url;
-              })
-            );
-            // const result = await cloudinary.uploader.upload(images?.tmpPath);
+          const uploadedImages = await Promise.all(
+            images.map(async (file) => {
+              const result = await cloudinary.uploader.upload(file?.tmpPath);
+              return result.secure_url;
+            })
+          );
+          // const result = await cloudinary.uploader.upload(images?.tmpPath);
 
-            job.images = uploadedImages;
-          }
-          await job.save();
-
-          return response
-            .status(200)
-            .send({ msg: "Jobs created successfully", data: job });
+          job.images = uploadedImages;
         }
+        job.posted_by = `${auth.user?.first_name} ${auth.user?.last_name}`;
+        await job.save();
+
+        return response
+          .status(200)
+          .send({ msg: "Jobs created successfully", data: job });
       } else {
         response.status(403).send({ msg: "Only consumer user can post jobs" });
       }

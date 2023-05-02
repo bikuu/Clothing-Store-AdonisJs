@@ -11,6 +11,7 @@ export default class extends BaseSchema {
       table.integer("consumer_id").unsigned().references("id").inTable("users");
       table.integer("job_id").unsigned().references("id").inTable("jobs");
       table.string("content").notNullable();
+      table.string("maker_name").notNullable();
       table
         .enu("hiring_status", ["pending", "interviewing", "hired", "declined"])
         .defaultTo("pending");

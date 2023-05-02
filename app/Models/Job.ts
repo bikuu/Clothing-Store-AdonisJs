@@ -16,6 +16,8 @@ export default class Job extends BaseModel {
   @column()
   public description: string;
   @column()
+  public posted_by: string;
+  @column()
   public price: number;
   @column()
   public hiring_status: string;
@@ -26,7 +28,6 @@ export default class Job extends BaseModel {
       `location->>'city' like '%${location}%' or location->>'state' like '%${location}%' or location->>'postalcode' like '%${location}%'`
     );
   }
-
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime;
 

@@ -8,7 +8,6 @@ import Hash from "@ioc:Adonis/Core/Hash";
 export default class UsersController {
   public async index({ auth, response, params }: HttpContextContract) {
     const { id } = params;
-    await auth.use("api").authenticate();
     const user = auth.user;
     try {
       if (id) {

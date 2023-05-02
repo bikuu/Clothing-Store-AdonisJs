@@ -13,6 +13,8 @@ export default class JobsQuotation extends BaseModel {
   @column()
   public content: string;
   @column()
+  public maker_name: string;
+  @column()
   public hiring_status: string;
 
   @column.dateTime({ autoCreate: true })

@@ -20,7 +20,10 @@ export default class JobQuotationsController {
 
       const datas = await JobsQuotation.all();
       const newDatas = datas?.map((data) => {
-        if (datas && auth.user?.id === data.consumer_id) {
+        if (
+          (datas && auth.user?.id === data.consumer_id) ||
+          auth.user?.id === data.maker_id
+        ) {
           return data;
         }
       });
@@ -39,6 +42,9 @@ export default class JobQuotationsController {
         const jobsQuotation = new JobsQuotation();
         //   if(payload.maker_id)
         jobsQuotation.fill(payload);
+
+        jobsQuotation.maker_name = `${auth.user?.first_name} ${auth.user?.last_name}`;
+
         await jobsQuotation.save();
 
         return response.status(200).send({
