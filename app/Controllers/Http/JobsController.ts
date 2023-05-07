@@ -76,6 +76,33 @@ export default class JobsController {
       response.send({ msg: error });
     }
   }
+  public async allJobs({ response }: HttpContextContract) {
+
+    const datas = await Job.all();
+    try {
+      if (datas) {
+        // for (let i = 0; i < datas?.length; i++) {
+        //   // let categories = JSON.parse(JSON.stringify(datas[i].categories));
+
+        //   // let categoriesArray = categories[i]
+        //   //   .split(",")
+        //   //   .map((category) => category.replace(/[{}"']/g, ""));
+        //   // datas[i].categories = categoriesArray;
+
+        //   if (datas[i].images) {
+        //     let images = JSON.parse(JSON.stringify(datas[i].images));
+        //     const imagesArray = images
+        //       .split(",")
+        //       .map((image) => image.replace(/[{}"']/g, ""));
+        //     datas[i].images = imagesArray;
+        //   }
+        // }
+        return response.status(200).send({ datas: datas });
+      }
+    } catch (error) {
+      response.send({ msg: error });
+    }
+  }
 
   public async search({ request, response }: HttpContextContract) {
     try {

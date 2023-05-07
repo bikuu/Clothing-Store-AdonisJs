@@ -22,6 +22,7 @@ import Route from "@ioc:Adonis/Core/Route";
 
 Route.group(() => {
   Route.group(() => {
+    Route.get("/job", "JobsController.allJobs");
     Route.get("/job/search", "JobsController.search");
     Route.get("/workfolio/:id?", "WorkfoliosController.index");
     Route.post("/register", "UsersController.register");
